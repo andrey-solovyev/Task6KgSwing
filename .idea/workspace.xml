@@ -1,15 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2dad8c71-494c-4863-9e58-e3afc91e16ba" name="Default Changelist" comment="" />
+    <list default="true" id="2dad8c71-494c-4863-9e58-e3afc91e16ba" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Task6KgSwing/Form$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Task6KgSwing/Form$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Task6KgSwing/Form.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Task6KgSwing/com/company/Logic.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Task6KgSwing/com/company/Logic.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Form.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Form.form" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Form.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Form.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/company/Logic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Logic.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1UVObKNoJ6WojqzDwmZc9luvNdG" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.SHOW" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
@@ -21,8 +36,8 @@
       <recent name="com.company" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\andru\IdeaProjects\Task6KgSwing\src" />
       <recent name="C:\Users\andru\IdeaProjects\Task6KgSwing\src\com\company" />
+      <recent name="C:\Users\andru\IdeaProjects\Task6KgSwing\src" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -37,7 +52,20 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Form">
+    <configuration name="Form" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.company.Form" />
+      <module name="Task6KgSwing" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.company.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Main" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="Form" />
       <module name="Task6KgSwing" />
@@ -49,6 +77,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Form" />
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
@@ -67,11 +96,28 @@
       <workItem from="1575446245955" duration="364000" />
       <workItem from="1575455665916" duration="573000" />
       <workItem from="1575466394499" duration="2101000" />
-      <workItem from="1575477279770" duration="1030000" />
+      <workItem from="1575477279770" duration="6762000" />
+      <workItem from="1575664150546" duration="2570000" />
+      <workItem from="1575700663412" duration="1959000" />
+      <workItem from="1575706030849" duration="933000" />
+      <workItem from="1575709477190" duration="1000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

@@ -88,6 +88,7 @@ public class Logic {
     }
 
     private void repaint() {
+        piramide();
         double roll = toRadians(0);
         Matrix headingTransform = new Matrix(new double[]{
                 cos(heading), 0, -sin(heading), 0,
