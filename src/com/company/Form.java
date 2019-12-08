@@ -1,6 +1,8 @@
 package com.company;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -22,7 +24,6 @@ public class Form extends JDialog {
     private JSpinner valueY;
     private JSpinner valueX;
     private int update = 0;
-    private int k = 0;
     public static final float UPDATE_RATE = 60.0f;
     public static final float UPDATE_INTERVAL = 1999000000 / UPDATE_RATE;
 
@@ -100,7 +101,6 @@ public class Form extends JDialog {
 
         piramide();
         if (update == -180) update = 180;
-        update--;
         Graphics2D g2 = (Graphics2D) DrawPanel.getGraphics();
         g2.setColor(Color.GRAY);
         g2.fillRect(0, 0, getWidth(), getHeight());
@@ -109,7 +109,7 @@ public class Form extends JDialog {
 
         double roll = toRadians(0);
         double heading = toRadians(30);
-        double deltaX = toRadians(parseDouble(valueX.getValue().toString()) + (k++));
+        double deltaX = toRadians(parseDouble(valueX.getValue().toString()));
         double deltaY = toRadians(parseDouble(valueY.getValue().toString()));
         double deltaZ = toRadians(parseDouble(valueZ.getValue().toString()));
         Matrix matrixX = new Matrix(new double[]{
@@ -163,19 +163,25 @@ public class Form extends JDialog {
         double fov = tan(fovAngle / 2) * 180;
         Matrix transform = new Matrix(null);
 
-        Matrix tran = matrixY
-               // .multiply(matrixY)
-                .multiply(matrixZ)
-                .multiply(updates)
-                //.multiply(pitchTransform)
-                // .multiply(rollTransform)
-                .multiply(panOutTransform);
-        // .multiply(updates);
-        //.multiply(rollTransform);
-        transform = tran;
+        if (parseDouble(speed.getValue().toString()) == 0) {
+
+            Matrix tran = matrixY
+                    // .multiply(matrixY)
+                    .multiply(matrixZ)
+                    .multiply(panOutTransform);
+            transform = tran;
+        } else {
+            Matrix tran = matrixY
+                    //  .multiply(matrixY)
+                    .multiply(matrixZ)
+                    .multiply(updates)
+                    .multiply(panOutTransform);
+            transform = tran;
+        }
 
 
-        BufferedImage img = new BufferedImage((int) DrawPanel.getWidth(), (int) DrawPanel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage img =
+                new BufferedImage((int) DrawPanel.getWidth(), (int) DrawPanel.getHeight(), BufferedImage.TYPE_INT_ARGB);
         double[] zBuffer = new double[img.getWidth() * img.getHeight()];
         // initialize array with extremely far away depths
         for (int q = 0; q < zBuffer.length; q++) {
@@ -186,15 +192,18 @@ public class Form extends JDialog {
             Vertex v2 = transform.transform(t.getV2());
             Vertex v3 = transform.transform(t.getV3());
 
-            Vertex ab = new Vertex(v2.getX() - v1.getX(), v2.getY() - v1.getY(), v2.getZ() - v1.getZ(), v2.getW() - v1.getW());
-            Vertex ac = new Vertex(v3.getX() - v1.getX(), v3.getY() - v1.getY(), v3.getZ() - v1.getZ(), v3.getW() - v1.getW());
+            Vertex ab =
+                    new Vertex(v2.getX() - v1.getX(), v2.getY() - v1.getY(), v2.getZ() - v1.getZ(), v2.getW() - v1.getW());
+            Vertex ac =
+                    new Vertex(v3.getX() - v1.getX(), v3.getY() - v1.getY(), v3.getZ() - v1.getZ(), v3.getW() - v1.getW());
             Vertex norm = new Vertex(
                     ab.getY() * ac.getZ() - ab.getZ() * ac.getY(),
                     ab.getZ() * ac.getX() - ab.getX() * ac.getZ(),
                     ab.getX() * ac.getY() - ab.getY() * ac.getX(),
                     1
             );
-            double normalLength = sqrt(norm.getX() * norm.getX() + norm.getY() * norm.getY() + norm.getZ() * norm.getZ());
+            double normalLength =
+                    sqrt(norm.getX() * norm.getX() + norm.getY() * norm.getY() + norm.getZ() * norm.getZ());
             norm.setX(norm.getX() / normalLength);
             norm.setY(norm.getY() / normalLength);
             norm.setZ(norm.getZ() / normalLength);
@@ -220,12 +229,16 @@ public class Form extends JDialog {
             int minY = (int) max(0, ceil(min(v1.getY(), min(v2.getY(), v3.getY()))));
             int maxY = (int) min(img.getHeight() - 1, floor(max(v1.getY(), max(v2.getY(), v3.getY()))));
 
-            double triangleArea = (v1.getY() - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) * (v3.getX() - v1.getX());
+            double triangleArea =
+                    (v1.getY() - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) * (v3.getX() - v1.getX());
             for (int y = minY; y <= maxY; y++) {
                 for (int x = minX; x <= maxX; x++) {
-                    double b1 = ((y - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) * (v3.getX() - x)) / triangleArea;
-                    double b2 = ((y - v1.getY()) * (v3.getX() - v1.getX()) + (v3.getY() - v1.getY()) * (v1.getX() - x)) / triangleArea;
-                    double b3 = ((y - v2.getY()) * (v1.getX() - v2.getX()) + (v1.getY() - v2.getY()) * (v2.getX() - x)) / triangleArea;
+                    double b1 =
+                            ((y - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) * (v3.getX() - x)) / triangleArea;
+                    double b2 =
+                            ((y - v1.getY()) * (v3.getX() - v1.getX()) + (v3.getY() - v1.getY()) * (v1.getX() - x)) / triangleArea;
+                    double b3 =
+                            ((y - v2.getY()) * (v1.getX() - v2.getX()) + (v1.getY() - v2.getY()) * (v2.getX() - x)) / triangleArea;
                     if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1 && b3 >= 0 && b3 <= 1) {
                         double depth = b1 * v1.getZ() + b2 * v2.getZ() + b3 * v3.getZ();
                         int zIndex = y * img.getWidth() + x;
@@ -256,7 +269,9 @@ public class Form extends JDialog {
     }
 
     public void render() {
-        //Logic logic = new Logic(DrawPanel);
+        Logic logic = new Logic(DrawPanel);
+        // go();
+        logic.go(parseDouble(valueX.getValue().toString()), parseDouble(valueY.getValue().toString()), parseDouble(valueZ.getValue().toString()), parseDouble(speed.getValue().toString()), "SSS", 10);
       /*  java.util.Timer timer = new java.util.Timer();
 
         TimerTask timerTask = new TimerTask() {
@@ -270,8 +285,8 @@ public class Form extends JDialog {
             }
         };
         timer.schedule(timerTask, 0, 50);*/
-        int update = 0;
-        boolean running = true;
+
+   /*     boolean running = true;
         float delta = 0;
         long lastTime = System.nanoTime();
 
@@ -283,12 +298,11 @@ public class Form extends JDialog {
             delta += (elapsedTime / UPDATE_INTERVAL);
             while (delta >= 1) {
                 go();
-
-
+                update--;
                 delta--;
 
             }
-        }
+        }*/
     }
 
 
@@ -297,6 +311,22 @@ public class Form extends JDialog {
         dialog.setSize(500, 500);
         dialog.pack();
         dialog.setVisible(true);
+
+        boolean running = true;
+        float delta = 0;
+        long lastTime = System.nanoTime();
+
+        while (running) {
+            long now = System.nanoTime();
+            long elapsedTime = now - lastTime;
+            lastTime = now;
+            //    System.out.println(update);
+            delta += (elapsedTime / UPDATE_INTERVAL);
+            while (delta >= 1) {
+                delta--;
+
+            }
+        }
         System.exit(0);
 
     }

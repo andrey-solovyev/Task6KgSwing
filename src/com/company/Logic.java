@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.TimerTask;
 
+import static java.lang.Double.parseDouble;
 import static java.lang.Math.*;
 
 public class Logic {
@@ -27,6 +28,9 @@ public class Logic {
     private double FoV;
     private JPanel jPanel;
     private Graphics graphics;
+    public static final float UPDATE_RATE = 60.0f;
+    public static final float UPDATE_INTERVAL = 1999000000 / UPDATE_RATE;
+
 
     public Logic(JPanel jPanel) {
         this.jPanel = jPanel;
@@ -57,62 +61,80 @@ public class Logic {
         return tris;
     }
 
-    public void go(int x, int y, int z, int speed, String string, int FoV) {
+    public void go(double x, double y, double z, double speed, String string, int FoV) {
         n1 = toRadians(x);
         n2 = toRadians(y);
         n3 = toRadians(z);
+        rotationalSpeed = speed;
         this.FoV = toRadians(FoV);
         repaint();
+      /*  boolean running = true;
+        float delta = 0;
+        long lastTime = System.nanoTime();
+
+        while (running) {
+            long now = System.nanoTime();
+            long elapsedTime = now - lastTime;
+            lastTime = now;
+            //    System.out.println(update);
+            delta += (elapsedTime / UPDATE_INTERVAL);
+            while (delta >= 1) {
+                repaint();
+                delta--;
+
+            }
+        }*/
     }
 
-    public void go(int x, int y, int z) {
 
-    }
 
-    public void go(double headingSlider) {
-        heading = toRadians(headingSlider);
+    public void repaint() {
         piramide();
-        FoV = toRadians(120);
-        rotationalSpeed = 1.2;
+        // if (update == -180) update = 180;
+        Graphics2D g2 = (Graphics2D) jPanel.getGraphics();
+        g2.setColor(Color.GRAY);
+        g2.fillRect(0, 0, jPanel.getWidth(), jPanel.getHeight());
 
-    }
+        //  double gamma = toRadians(update);
 
-    public void go(int speed) {
-        rotationalSpeed = speed;
-        gamma=toRadians(speed);
-        piramide();
-        heading = toRadians(0);
-        FoV = toRadians(80);
-        // rotationalSpeed=1.2;
-        repaint();
-    }
-
-    private void repaint() {
-        piramide();
         double roll = toRadians(0);
-        Matrix headingTransform = new Matrix(new double[]{
-                cos(heading), 0, -sin(heading), 0,
-                0, 1, 0, 0,
-                sin(heading), 0, cos(heading), 0,
+        double heading = toRadians(30);
+        double deltaX = n1;
+        double deltaY = n2;
+        double deltaZ = n3;
+        Matrix matrixX = new Matrix(new double[]{
+                1, 0, 0, 0,
+                0, cos(deltaX), sin(deltaX), 0,
+                0, -sin(deltaX), cos(deltaX),0,
                 0, 0, 0, 1
         });
-        Matrix updates = null;
-        if (rotationalSpeed != 0) {
-            Matrix update = new Matrix(new double[]{
-                    cos(gamma), sin(gamma), 0, 0,
-                    -sin(gamma), cos(gamma), 0, 0,
-                    0, 0, 1, 0,
-                    0, 0, 0, 1
-            });
-            updates = update;
-        }
+        Matrix matrixY = new Matrix(new double[]{
+                cos(deltaY), 0, -sin(deltaY), 0,
+                0, 1, 0, 0,
+                sin(deltaY), 0, cos(deltaY), 0,
+                0, 0, 0, 1
+        });
+        Matrix matrixZ = new Matrix(new double[]{
+                cos(deltaZ), sin(deltaZ), 0, 0,
+                -sin(deltaZ), cos(deltaZ), 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
+        });
+        Matrix updates = new Matrix(new double[]{
+                cos(gamma), sin(gamma), 0, 0,
+                -sin(gamma), cos(gamma), 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
+        });
+
+
         System.out.println(gamma);
-        Matrix arbitraryAxis = new Matrix(new double[]{
+   /*     Matrix arbitraryAxis = new Matrix(new double[]{
                 Math.pow(n1, 2) + (1 - Math.pow(n1, 2)) * cos(gamma), n1 * n2 * (1 - cos(gamma)) + n3 * sin(gamma), n1 * n3 * (1 - cos(gamma)) - n2 * sin(gamma), 0,
                 n1 * n2 * (1 - cos(gamma)) - n3 * sin(gamma), Math.pow(n2, 2) + (1 - Math.pow(n2, 2)) * cos(gamma), n2 * n3 * (1 - cos(gamma)) + n1 * sin(gamma), 0,
                 n1 * n3 * (1 - cos(gamma)) + n2 * sin(gamma), n2 * n3 * (1 - cos(gamma)) - n1 * sin(gamma), Math.pow(n3, 2) + (1 - Math.pow(n3, 2)) * cos(gamma), 0,
                 0, 0, 0, 1
-        });
+        });*/
         Matrix rollTransform = new Matrix(new double[]{
                 cos(roll), -sin(roll), 0, 0,
                 sin(roll), cos(roll), 0, 0,
@@ -127,29 +149,28 @@ public class Logic {
         });
         double viewportWidth = jPanel.getWidth();
         double viewportHeight = jPanel.getHeight();
-        double fovAngle = FoV;
+        double fovAngle = toRadians(120);
         double fov = tan(fovAngle / 2) * 180;
         Matrix transform = new Matrix(null);
-        if (rotationalSpeed != 0) {
-            Matrix tran = headingTransform
-                    //.multiply(pitchTransform)
-                    .multiply(rollTransform)
-                    .multiply(panOutTransform)
-                    .multiply(updates);
-            //  .multiply(arbitraryAxis);
+
+        if (rotationalSpeed == 0) {
+
+            Matrix tran = matrixX
+                    .multiply(matrixY)
+                    .multiply(matrixZ)
+                    .multiply(panOutTransform);
             transform = tran;
         } else {
-            Matrix tran = headingTransform
-                    //.multiply(pitchTransform)
-                    // .multiply(rollTransform)
+            Matrix tran = matrixY
+                    //  .multiply(matrixY)
+                    .multiply(matrixZ)
+                    .multiply(updates)
                     .multiply(panOutTransform);
-            // .multiply(updates);
-            //.multiply(rollTransform);
             transform = tran;
-
         }
 
-        BufferedImage img = new BufferedImage((int) jPanel.getWidth(), (int) jPanel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage img =
+                new BufferedImage((int) jPanel.getWidth(), (int) jPanel.getHeight(), BufferedImage.TYPE_INT_ARGB);
         double[] zBuffer = new double[img.getWidth() * img.getHeight()];
         // initialize array with extremely far away depths
         for (int q = 0; q < zBuffer.length; q++) {
@@ -161,15 +182,18 @@ public class Logic {
             Vertex v2 = transform.transform(t.getV2());
             Vertex v3 = transform.transform(t.getV3());
 
-            Vertex ab = new Vertex(v2.getX() - v1.getX(), v2.getY() - v1.getY(), v2.getZ() - v1.getZ(), v2.getW() - v1.getW());
-            Vertex ac = new Vertex(v3.getX() - v1.getX(), v3.getY() - v1.getY(), v3.getZ() - v1.getZ(), v3.getW() - v1.getW());
+            Vertex ab =
+                    new Vertex(v2.getX() - v1.getX(), v2.getY() - v1.getY(), v2.getZ() - v1.getZ(), v2.getW() - v1.getW());
+            Vertex ac =
+                    new Vertex(v3.getX() - v1.getX(), v3.getY() - v1.getY(), v3.getZ() - v1.getZ(), v3.getW() - v1.getW());
             Vertex norm = new Vertex(
                     ab.getY() * ac.getZ() - ab.getZ() * ac.getY(),
                     ab.getZ() * ac.getX() - ab.getX() * ac.getZ(),
                     ab.getX() * ac.getY() - ab.getY() * ac.getX(),
                     1
             );
-            double normalLength = sqrt(norm.getX() * norm.getX() + norm.getY() * norm.getY() + norm.getZ() * norm.getZ());
+            double normalLength =
+                    sqrt(norm.getX() * norm.getX() + norm.getY() * norm.getY() + norm.getZ() * norm.getZ());
             norm.setX(norm.getX() / normalLength);
             norm.setY(norm.getY() / normalLength);
             norm.setZ(norm.getZ() / normalLength);
@@ -195,13 +219,17 @@ public class Logic {
             int minY = (int) max(0, ceil(min(v1.getY(), min(v2.getY(), v3.getY()))));
             int maxY = (int) min(img.getHeight() - 1, floor(max(v1.getY(), max(v2.getY(), v3.getY()))));
 
-            double triangleArea = (v1.getY() - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) * (v3.getX() - v1.getX());
+            double triangleArea =
+                    (v1.getY() - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) * (v3.getX() - v1.getX());
 
             for (int y = minY; y <= maxY; y++) {
                 for (int x = minX; x <= maxX; x++) {
-                    double b1 = ((y - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) * (v3.getX() - x)) / triangleArea;
-                    double b2 = ((y - v1.getY()) * (v3.getX() - v1.getX()) + (v3.getY() - v1.getY()) * (v1.getX() - x)) / triangleArea;
-                    double b3 = ((y - v2.getY()) * (v1.getX() - v2.getX()) + (v1.getY() - v2.getY()) * (v2.getX() - x)) / triangleArea;
+                    double b1 =
+                            ((y - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) * (v3.getX() - x)) / triangleArea;
+                    double b2 =
+                            ((y - v1.getY()) * (v3.getX() - v1.getX()) + (v3.getY() - v1.getY()) * (v1.getX() - x)) / triangleArea;
+                    double b3 =
+                            ((y - v2.getY()) * (v1.getX() - v2.getX()) + (v1.getY() - v2.getY()) * (v2.getX() - x)) / triangleArea;
                     if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1 && b3 >= 0 && b3 <= 1) {
                         double depth = b1 * v1.getZ() + b2 * v2.getZ() + b3 * v3.getZ();
                         int zIndex = y * img.getWidth() + x;
@@ -221,7 +249,7 @@ public class Logic {
     System.out.println();
 }*/
         graphics.drawImage(img, 0, 0, null);
-       // jPanel.repaint();
+        // jPanel.repaint();
     }
 
     public static java.awt.Color getShade(Color color, double shade) {
